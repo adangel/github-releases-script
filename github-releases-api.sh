@@ -137,8 +137,9 @@ function gh_release_uploadAsset() {
 #
 function gh_release_updateRelease() {
     local release="$1"
-    local name="$2"
-    local body="$3"
+    local tagName="$2"
+    local name="$3"
+    local body="$4"
 
     gh_release_getIdFromData "$release"
     local releaseId="$RESULT"
@@ -151,6 +152,7 @@ function gh_release_updateRelease() {
 
     local request=$(cat <<-EOF
 		{
+		    "tag_name": "${tagName}",
 		    "name": "${name}",
 		    "body": "${body}"
 		}
