@@ -100,6 +100,17 @@ function gh_release_getIdFromData() {
 }
 
 #
+# Determines the tag_name from the given JSON release data.
+#
+# RESULT = "the tag name"
+#
+function gh_release_getTagNameFromData() {
+    local release="$1"
+
+    RESULT=$(echo $release | jq --raw-output ".tag_name")
+}
+
+#
 # Uploads a asset to an existing release.
 #
 # See: https://developer.github.com/v3/repos/releases/#upload-a-release-asset
@@ -137,13 +148,14 @@ function gh_release_uploadAsset() {
 #
 function gh_release_updateRelease() {
     local release="$1"
-    local tagName="$2"
-    local name="$3"
-    local body="$4"
+    local name="$2"
+    local body="$3"
 
     gh_release_getIdFromData "$release"
     local releaseId="$RESULT"
-    log_debug "$FUNCNAME releaseId=$releaseId name=$name"
+    gh_release_getTagNameFromData "$release"
+    local tagName="$RESULT"
+    log_debug "$FUNCNAME releaseId=$releaseId name=$name tag_name=$tagName"
 
     body="${body//'\'/\\\\}"
     body="${body//$'\r'/}"
